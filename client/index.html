@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CineGraph — Movie Explorer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0f0f13;
+      color: #e8e8e8;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1a24;
+      padding: 20px 40px;
+      border-bottom: 1px solid #2a2a3a;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    header h1 { font-size: 24px; color: #fff; }
+    header span { font-size: 13px; color: #888; margin-top: 2px; }
+
+    .search-bar {
+      margin: 32px auto;
+      max-width: 600px;
+      padding: 0 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: 1px solid #2a2a3a;
+      background: #1a1a24;
+      color: #e8e8e8;
+      font-size: 15px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .search-bar input:focus { border-color: #7f77dd; }
+
+    .search-bar button {
+      padding: 12px 22px;
+      background: #7f77dd;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .search-bar button:hover { background: #534ab7; }
+
+    .section-title {
+      max-width: 1100px;
+      margin: 0 auto 16px;
+      padding: 0 24px;
+      font-size: 14px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .movies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto 40px;
+      padding: 0 24px;
+    }
+
+    .movie-card {
+      background: #1a1a24;
+      border: 1px solid #2a2a3a;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+
+    .movie-card:hover {
+      border-color: #7f77dd;
+      transform: translateY(-3px);
+    }
+
+    .movie-card .title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .movie-card .year {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .movie-card .rating {
+      display: inline-block;
+      background: #2a2a3a;
+      color: #fac775;
+      font-size: 13px;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: #1a1a24;
+      border: 1px solid #2a2a3a;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+    }
+
+    .modal h2 { font-size: 22px; color: #fff; margin-bottom: 4px; }
+    .modal .meta { font-size: 13px; color: #888; margin-bottom: 20px; }
+
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 20px;
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover { color: #fff; }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+
+    .tag {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .tag.genre { background: #2a1a3a; color: #afa9ec; }
+    .tag.actor { background: #0f2a2a; color: #5dcaa5; }
+    .tag.director { background: #2a1a10; color: #f0997b; }
+
+    .tag-label {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    /* Actor search */
+    .actor-search {
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      padding: 0 24px;
+    }
+
+    .actor-search input {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #2a2a3a;
+      background: #1a1a24;
+      color: #e8e8e8;
+      font-size: 14px;
+      outline: none;
+      width: 280px;
+      transition: border 0.2s;
+    }
+
+    .actor-search input:focus { border-color: #5dcaa5; }
+
+    .actor-search button {
+      padding: 10px 18px;
+      background: #0f6e56;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 8px;
+      transition: background 0.2s;
+    }
+
+    .actor-search button:hover { background: #1d9e75; }
+
+    .loading {
+      text-align: center;
+      color: #555;
+      padding: 40px;
+      font-size: 14px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #555;
+      padding: 40px;
+      font-size: 14px;
+    }
+
+ .similar-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #14141c;
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .similar-card:hover { border-color: #7f77dd; }
+
+    .similar-card .s-title { font-size: 14px; color: #fff; }
+
+    .similar-card .s-shared {
+      font-size: 11px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>CineGraph</h1>
+    <span>Powered by a graph database</span>
+  </div>
+</header>
+
+<!-- Search bar -->
+<div class="search-bar">
+  <input id="search-input" type="text" placeholder="Search movies..." />
+  <button onclick="searchMovies()">Search</button>
+</div>
+
+<!-- Actor search -->
+<div class="actor-search">
+  <input id="actor-input" type="text" placeholder="Browse by actor (e.g. Tom Hanks)" />
+  <button onclick="searchByActor()">Find movies</button>
+</div>
+
+<!-- Movies grid -->
+<div class="section-title" id="grid-label">All movies</div>
+<div class="movies-grid" id="movies-grid">
+  <div class="loading">Loading movies...</div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modal-title"></h2>
+    <div class="meta" id="modal-meta"></div>
+    <div class="tag-label">Genres</div>
+    <div class="tag-row" id="modal-genres"></div>
+    <div class="tag-label">Cast</div>
+    <div class="tag-row" id="modal-actors"></div>
+ <div class="tag-label">Director</div>
+    <div class="tag-row" id="modal-directors"></div>
+    <div class="tag-label" id="similar-label" style="display:none; margin-top: 6px;">Similar movies (shared cast)</div>
+    <div id="modal-similar"></div>
+  </div>
+</div>
+
+<script>
+  async function loadAllMovies() {
+    const grid = document.getElementById('movies-grid');
+    try {
+      const res = await fetch('/api/movies');
+      if (!res.ok) throw new Error();
+      const movies = await res.json();
+      renderMovies(movies, 'All movies');
+    } catch {
+      grid.innerHTML = '<div class="error-msg">Could not connect to database. Is the server running?</div>';
+    }
+  }
+
+  async function searchMovies() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return loadAllMovies();
+    const grid = document.getElementById('movies-grid');
+    grid.innerHTML = '<div class="loading">Searching...</div>';
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+      const movies = await res.json();
+      renderMovies(movies, `Results for "${q}"`);
+    } catch {
+      grid.innerHTML = '<div class="error-msg">Search failed.</div>';
+    }
+  }
+
+  async function searchByActor() {
+    const name = document.getElementById('actor-input').value.trim();
+    if (!name) return;
+    const grid = document.getElementById('movies-grid');
+    grid.innerHTML = '<div class="loading">Finding movies...</div>';
+    try {
+      const res = await fetch(`/api/actor/${encodeURIComponent(name)}`);
+      const movies = await res.json();
+      renderMovies(movies, `Movies with ${name}`);
+    } catch {
+      grid.innerHTML = '<div class="error-msg">Could not fetch actor movies.</div>';
+    }
+  }
+
+  function renderMovies(movies, label) {
+    document.getElementById('grid-label').textContent = label;
+    const grid = document.getElementById('movies-grid');
+    if (!movies.length) {
+      grid.innerHTML = '<div class="empty">No movies found.</div>';
+      return;
+    }
+    grid.innerHTML = movies.map(m => `
+      <div class="movie-card" onclick="openModal('${m.title.replace(/'/g, "\\'")}')">
+        <div class="title">${m.title}</div>
+        <div class="year">${m.year}</div>
+        <div class="rating">★ ${m.rating}</div>
+      </div>
+    `).join('');
+  }
+
+  async function openModal(title) {
+    try {
+      const res = await fetch(`/api/movies/${encodeURIComponent(title)}`);
+      const m = await res.json();
+      document.getElementById('modal-title').textContent = m.title;
+      document.getElementById('modal-meta').textContent = `${m.year} · ★ ${m.rating}`;
+      document.getElementById('modal-genres').innerHTML =
+        m.genres.map(g => `<span class="tag genre">${g}</span>`).join('');
+      document.getElementById('modal-actors').innerHTML =
+        m.actors.map(a => `<span class="tag actor">${a}</span>`).join('');
+document.getElementById('modal-directors').innerHTML =
+        m.directors.map(d => `<span class="tag director">${d}</span>`).join('');
+      document.getElementById('modal-overlay').classList.add('active');
+      loadSimilarMovies(m.title);
+    } catch {
+      alert('Could not load movie details.');
+    }
+  }
+
+  async function loadSimilarMovies(title) {
+    const label = document.getElementById('similar-label');
+    const container = document.getElementById('modal-similar');
+    container.innerHTML = '';
+    label.style.display = 'none';
+    try {
+      const res = await fetch(`/api/movies/${encodeURIComponent(title)}/similar`);
+      const similar = await res.json();
+      if (!similar.length) return;
+      label.style.display = 'block';
+      container.innerHTML = similar.map(s => `
+        <div class="similar-card" onclick="openModal('${s.title.replace(/'/g, "\\'")}')">
+          <span class="s-title">${s.title}</span>
+          <span class="s-shared">${s.sharedCount} shared cast · ★ ${s.rating}</span>
+        </div>
+      `).join('');
+    } catch {
+      // silently skip — not critical to core UX
+    }
+  }
+
+  function closeModal(event) {
+    if (!event || event.target === document.getElementById('modal-overlay')) {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+  }
+
+  document.getElementById('search-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') searchMovies();
+  });
+
+  document.getElementById('actor-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') searchByActor();
+  });
+
+  loadAllMovies();
+</script>
+</body>
