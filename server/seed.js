@@ -24,6 +24,7 @@ const people = [
   { name: 'Lana Wachowski', born: 1965 },
   { name: 'Christopher Nolan', born: 1970 },
   { name: 'Robert Zemeckis', born: 1951 },
+  { name: 'Michael Caine', born: 1933 },
 ];
 
 const genres = ['Action', 'Sci-Fi', 'Drama', 'Thriller'];
@@ -34,8 +35,13 @@ const actedIn = [
   { person: 'Tom Hanks', movie: 'Cast Away' },
   { person: 'Tom Hanks', movie: 'Forrest Gump' },
   { person: 'Leonardo DiCaprio', movie: 'Inception' },
+  { person: 'Leonardo DiCaprio', movie: 'The Dark Knight' },
   { person: 'Christian Bale', movie: 'The Dark Knight' },
+  { person: 'Christian Bale', movie: 'Inception' },
   { person: 'Leonardo DiCaprio', movie: 'Interstellar' },
+  { person: 'Michael Caine', movie: 'The Dark Knight' },
+  { person: 'Michael Caine', movie: 'Inception' },
+  { person: 'Michael Caine', movie: 'Interstellar' },
 ];
 
 const directed = [
