@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CineGraph — Person</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg: #f8f6f2;
+      --bg-card: #ffffff;
+      --bg-hover: #f0ede8;
+      --border: #e2ddd6;
+      --border-light: #edeae4;
+      --gold: #b8855c;
+      --gold-dim: #a0714d;
+      --ink: #2c2a27;
+      --ink-dim: #6b6660;
+      --ink-muted: #9b9590;
+      --radius: 12px;
+      --transition: 0.3s ease;
+    }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Sen', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius:4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+    .site-nav {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-nav .brand {
+      font-family: 'Sen', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .site-nav .brand::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+    .site-nav a {
+      color: var(--ink-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color var(--transition);
+      position: relative;
+      padding: 4px 0;
+    }
+    .site-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width var(--transition);
+    }
+    .site-nav a:hover { color: var(--ink); }
+    .site-nav a:hover::after { width: 100%; }
+    .site-nav a.active { color: var(--gold); }
+    .site-nav a.active::after { width: 100%; }
+    .nav-spacer { flex:1; }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink-dim);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 28px 40px 0;
+      transition: color var(--transition);
+    }
+    .back-link:hover { color: var(--gold); }
+    .back-link svg { transition: transform var(--transition); }
+    .back-link:hover svg { transform: translateX(-4px); }
+
+    .marquee {
+      max-width: 880px;
+      margin: 24px auto 0;
+      padding: 0 40px;
+      text-align: center;
+    }
+    .marquee .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .marquee h1 {
+      font-family: 'Sen', sans-serif;
+      font-weight: 700;
+      font-size: clamp(42px, 7vw, 72px);
+      color: var(--gold);
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+    }
+    .marquee .born {
+      color: var(--ink-dim);
+      font-size: 15px;
+      margin-top: 10px;
+    }
+
+    .divider {
+      max-width: 880px;
+      margin: 32px auto 36px;
+      padding: 0 40px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .divider span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background var(--transition);
+    }
+    .divider span:nth-child(odd) { background: var(--border-light); }
+    .divider:hover span { background: var(--gold-dim); }
+    .divider:hover span:nth-child(odd) { background: var(--gold); }
+
+    .section {
+      max-width: 880px;
+      margin: 0 auto 48px;
+      padding: 0 40px;
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .section-header h2 {
+      font-family: 'Sen', sans-serif;
+      font-weight: 600;
+      font-size: 24px;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .section-header .sub {
+      color: var(--ink-dim);
+      font-size: 14px;
+    }
+    .section-desc {
+      color: var(--ink-muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+    .role-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 12px;
+      border-radius: 20px;
+      background: var(--gold);
+      color: #fff;
+      margin-right: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .ticket {
+      display: flex;
+      align-items: stretch;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .ticket:hover {
+      border-color: var(--gold-dim);
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .ticket .stub-main {
+      flex: 1;
+      padding: 16px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .ticket .t-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .ticket .t-meta {
+      font-size: 13px;
+      color: var(--ink-dim);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ticket .t-meta .dot { color: var(--border-light); }
+    .ticket .t-meta .genre-tag {
+      font-size: 11px;
+      padding: 1px 10px;
+      border-radius: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      color: var(--ink-dim);
+    }
+    .ticket .t-rating {
+      font-weight: 600;
+      color: var(--gold);
+      font-size: 20px;
+      white-space: nowrap;
+      letter-spacing: -0.02em;
+    }
+    .ticket .perf {
+      width: 32px;
+      flex-shrink: 0;
+      background: repeating-linear-gradient(180deg, transparent 0 6px, var(--bg) 6px 8px);
+      background-color: var(--border);
+      border-left: 2px dashed var(--bg-card);
+    }
+
+    .collab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px,1fr));
+      gap: 12px;
+    }
+    .collab-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .collab-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .collab-card .c-name {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+    }
+    .collab-card .c-count {
+      font-size: 12px;
+      color: var(--gold-dim);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .loading, .empty, .error-msg {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--ink-dim);
+      font-size: 15px;
+    }
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .loading::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-msg { color: #b07a6a; }
+    .empty { color: var(--ink-muted); }
+
+    @media (max-width: 768px) {
+      .site-nav { padding:12px 20px; gap:20px; flex-wrap:wrap; }
+      .site-nav .brand { font-size:18px; }
+      .back-link { padding:20px 20px 0; font-size:12px; }
+      .marquee { padding:0 20px; margin-top:16px; }
+      .marquee h1 { font-size:32px; }
+      .section { padding:0 20px; margin-bottom:40px; }
+      .section-header h2 { font-size:20px; }
+      .ticket .stub-main { padding:14px 16px; flex-wrap:wrap; }
+      .ticket .t-title { font-size:14px; }
+      .ticket .t-rating { font-size:17px; }
+      .ticket .perf { width:20px; }
+      .collab-grid { grid-template-columns:1fr 1fr; }
+      .divider { padding:0 20px; margin:24px auto 28px; }
+    }
+    @media (max-width: 480px) {
+      .collab-grid { grid-template-columns:1fr; }
+      .ticket .stub-main { flex-direction:column; align-items:flex-start; gap:8px; }
+      .ticket .t-rating { align-self:flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="index.html" class="brand">CineGraph</a>
+    <a href="index.html">Home</a>
+    <a href="genre.html">Genres</a>
+    <span class="nav-spacer"></span>
+    <a href="person.html" class="active">Person</a>
+  </nav>
+
+  <a href="index.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 12L6 8L10 4" />
+    </svg>
+    Back to browse
+  </a>
+
+  <div class="marquee">
+    <div class="eyebrow">Person Profile</div>
+    <h1 id="person-name">Loading…</h1>
+    <div class="born" id="person-born"></div>
+  </div>
+
+  <div class="divider">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- ACTED IN -->
+  <div class="section" id="acted-section">
+    <div class="section-header">
+      <h2><span class="role-badge">Actor</span> Filmography</h2>
+      <span class="sub" id="acted-sub"></span>
+    </div>
+    <div class="section-desc">Movies this person appeared in as an actor.</div>
+    <div id="acted-list"><div class="loading">Loading acted movies…</div></div>
+  </div>
+
+  <!-- DIRECTED -->
+  <div class="section" id="directed-section">
+    <div class="section-header">
+      <h2><span class="role-badge" style="background:#a0714d;">Director</span> Filmography</h2>
+      <span class="sub" id="directed-sub"></span>
+    </div>
+    <div class="section-desc">Movies this person directed.</div>
+    <div id="directed-list"><div class="loading">Loading directed movies…</div></div>
+  </div>
+
+  <!-- COLLABORATORS -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Frequent Collaborators</h2>
+      <span class="sub">Co-stars</span>
+    </div>
+    <div class="section-desc">People this person has acted alongside most often.</div>
+    <div id="collaborators"><div class="loading">Finding collaborators…</div></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const personName = params.get('name') || '';
+
+    async function init() {
+      if (!personName) {
+        document.getElementById('person-name').textContent = 'No person specified';
+        return;
+      }
+      document.getElementById('person-name').textContent = personName;
+      loadPerson();
+      loadCollaborators();
+    }
+
+    async function loadPerson() {
+      const actedContainer = document.getElementById('acted-list');
+      const directedContainer = document.getElementById('directed-list');
+      try {
+        const res = await fetch(`/api/person/${encodeURIComponent(personName)}`);
+        if (!res.ok) {
+          if (res.status === 404) throw new Error('Person not found');
+          throw new Error();
+        }
+        const data = await res.json();
+
+        // Born
+        if (data.born) {
+          document.getElementById('person-born').textContent = `Born ${data.born}`;
+        }
+
+        // Acted
+        if (data.acted && data.acted.length) {
+          document.getElementById('acted-sub').textContent = `${data.acted.length} movie${data.acted.length === 1 ? '' : 's'}`;
+          actedContainer.innerHTML = renderMovieTickets(data.acted);
+        } else {
+          document.getElementById('acted-sub').textContent = '';
+          actedContainer.innerHTML = '<div class="empty">No acting credits found.</div>';
+        }
+
+        // Directed
+        if (data.directed && data.directed.length) {
+          document.getElementById('directed-sub').textContent = `${data.directed.length} movie${data.directed.length === 1 ? '' : 's'}`;
+          directedContainer.innerHTML = renderMovieTickets(data.directed);
+        } else {
+          document.getElementById('directed-sub').textContent = '';
+          directedContainer.innerHTML = '<div class="empty">No directing credits found.</div>';
+        }
+      } catch (err) {
+        actedContainer.innerHTML = `<div class="error-msg">Could not load person data. ${err.message || 'Is the server running?'}</div>`;
+        directedContainer.innerHTML = '';
+      }
+    }
+
+function renderMovieTickets(movies) {
+      return movies
+        .sort((a, b) => b.year - a.year)
+        .map(m => `
+          <div class="ticket" onclick="location.href='index.html?movie=${encodeURIComponent(m.title)}'">
+            <div class="stub-main">
+              <div>
+                <div class="t-title">${m.title}</div>
+                <div class="t-meta">
+                  <span>${m.year}</span>
+                  <span class="dot">·</span>
+                  ${(m.genres || []).map(g => `<span class="genre-tag">${g}</span>`).join('')}
+                </div>
+              </div>
+              <div class="t-rating">${m.rating}</div>
+            </div>
+            <div class="perf"></div>
+          </div>
+        `).join('');
+    }
+
+    async function loadCollaborators() {
+      const container = document.getElementById('collaborators');
+      try {
+        const res = await fetch(`/api/person/${encodeURIComponent(personName)}/collaborators`);
+        if (!res.ok) throw new Error();
+        const collabs = await res.json();
+        if (!collabs.length) {
+          container.innerHTML = '<div class="empty">No collaborators found.</div>';
+          return;
+        }
+        container.innerHTML = `<div class="collab-grid">${collabs.map(c => `
+          <div class="collab-card" onclick="location.href='person.html?name=${encodeURIComponent(c.name)}'">
+            <div class="c-name">${c.name}</div>
+            <div class="c-count">${c.sharedMovies} movie${c.sharedMovies === 1 ? '' : 's'} together</div>
+          </div>
+        `).join('')}</div>`;
+      } catch {
+        container.innerHTML = '<div class="error-msg">Could not load collaborators.</div>';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

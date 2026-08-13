@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CineGraph — Browse by Genre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg: #f8f6f2;
+      --bg-card: #ffffff;
+      --bg-hover: #f0ede8;
+      --border: #e2ddd6;
+      --border-light: #edeae4;
+      --gold: #b8855c;
+      --gold-dim: #a0714d;
+      --ink: #2c2a27;
+      --ink-dim: #6b6660;
+      --ink-muted: #9b9590;
+      --radius: 12px;
+      --transition: 0.3s ease;
+    }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Sen', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius:4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+    .site-nav {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-nav .brand {
+      font-family: 'Sen', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .site-nav .brand::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+    .site-nav a {
+      color: var(--ink-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color var(--transition);
+      position: relative;
+      padding: 4px 0;
+    }
+    .site-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width var(--transition);
+    }
+    .site-nav a:hover { color: var(--ink); }
+    .site-nav a:hover::after { width: 100%; }
+    .site-nav a.active { color: var(--gold); }
+    .site-nav a.active::after { width: 100%; }
+    .nav-spacer { flex:1; }
+
+    .marquee {
+      max-width: 900px;
+      margin: 32px auto 0;
+      padding: 0 40px;
+      text-align: center;
+    }
+    .marquee .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .marquee h1 {
+      font-family: 'Sen', sans-serif;
+      font-weight: 700;
+      font-size: clamp(36px, 6vw, 56px);
+      color: var(--gold);
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+    }
+
+    .divider {
+      max-width: 900px;
+      margin: 28px auto 32px;
+      padding: 0 40px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .divider span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background var(--transition);
+    }
+    .divider span:nth-child(odd) { background: var(--border-light); }
+    .divider:hover span { background: var(--gold-dim); }
+    .divider:hover span:nth-child(odd) { background: var(--gold); }
+
+    .shelf {
+      max-width: 1100px;
+      margin: 0 auto 12px;
+      padding: 0 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .genre-chip {
+      font-family: 'Sen', sans-serif;
+      font-weight: 600;
+      padding: 10px 24px;
+      border-radius: 40px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink-dim);
+      cursor: pointer;
+      font-size: 15px;
+      transition: all var(--transition);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .genre-chip:hover {
+      border-color: var(--gold-dim);
+      color: var(--ink);
+      background: var(--bg-hover);
+    }
+    .genre-chip.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #fff;
+    }
+    .genre-chip .cnt {
+      font-style: normal;
+      font-size: 11px;
+      opacity: 0.7;
+      margin-left: 6px;
+    }
+
+    .section {
+      max-width: 1100px;
+      margin: 36px auto 48px;
+      padding: 0 40px;
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .section-header h2 {
+      font-family: 'Sen', sans-serif;
+      font-weight: 600;
+      font-size: 24px;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .section-header .count {
+      font-size: 14px;
+      color: var(--ink-dim);
+    }
+
+    .movies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .ticket {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      transition: all var(--transition);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .ticket:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .ticket .t-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--ink);
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
+    }
+    .ticket .t-year {
+      font-size: 13px;
+      color: var(--ink-dim);
+      margin-bottom: 14px;
+    }
+    .ticket .t-rating {
+      font-weight: 600;
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .loading, .empty, .error-msg {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--ink-dim);
+      font-size: 15px;
+      grid-column: 1/-1;
+    }
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .loading::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-msg { color: #b07a6a; }
+    .empty { color: var(--ink-muted); }
+
+    @media (max-width: 768px) {
+      .site-nav { padding:12px 20px; gap:20px; flex-wrap:wrap; }
+      .site-nav .brand { font-size:18px; }
+      .marquee { padding:0 20px; margin-top:20px; }
+      .marquee h1 { font-size:28px; }
+      .divider { padding:0 20px; }
+      .shelf { padding:0 20px; }
+      .section { padding:0 20px; }
+      .movies-grid { grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap:14px; }
+    }
+    @media (max-width: 480px) {
+      .movies-grid { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="index.html" class="brand">CineGraph</a>
+    <a href="index.html">Home</a>
+    <a href="genre.html" class="active">Genres</a>
+    <span class="nav-spacer"></span>
+    <a href="person.html">Actor</a>
+  </nav>
+
+  <div class="marquee">
+    <div class="eyebrow">Browse</div>
+    <h1>Browse by Genre</h1>
+  </div>
+
+  <div class="divider">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="shelf" id="genre-shelf">
+    <div class="loading">Loading genres</div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <h2 id="grid-label">Select a genre</h2>
+      <span class="count" id="grid-count"></span>
+    </div>
+    <div class="movies-grid" id="movies-grid">
+      <div class="empty">Pick a genre above to see what's playing.</div>
+    </div>
+  </div>
+
+  <script>
+    let activeGenre = null;
+
+    async function loadGenres() {
+      const shelf = document.getElementById('genre-shelf');
+      try {
+        const res = await fetch('/api/genres');
+        if (!res.ok) throw new Error();
+        const genres = await res.json();
+        if (!genres.length) {
+          shelf.innerHTML = '<div class="empty">No genres found.</div>';
+          return;
+        }
+        shelf.innerHTML = genres.map(g => `
+          <div class="genre-chip" data-genre="${g.name}" onclick="selectGenre('${g.name.replace(/'/g, "\\'")}')">
+            ${g.name}<span class="cnt">${g.movieCount}</span>
+          </div>
+        `).join('');
+        if (genres[0]) selectGenre(genres[0].name);
+      } catch {
+        shelf.innerHTML = '<div class="error-msg">Could not load genres. Is the server running?</div>';
+      }
+    }
+
+    async function selectGenre(name) {
+      activeGenre = name;
+      document.querySelectorAll('.genre-chip').forEach(c => {
+        c.classList.toggle('active', c.dataset.genre === name);
+      });
+      document.getElementById('grid-label').textContent = name;
+      const grid = document.getElementById('movies-grid');
+      grid.innerHTML = '<div class="loading">Loading movies</div>';
+      try {
+        const res = await fetch(`/api/genres/${encodeURIComponent(name)}`);
+        if (!res.ok) throw new Error();
+        const movies = await res.json();
+        document.getElementById('grid-count').textContent = `(${movies.length})`;
+        if (!movies.length) {
+          grid.innerHTML = '<div class="empty">No movies found in this genre yet.</div>';
+          return;
+        }
+        grid.innerHTML = movies.map(m => `
+          <div class="ticket">
+            <div class="t-title">${m.title}</div>
+            <div class="t-year">${m.year}</div>
+            <div class="t-rating">${m.rating}</div>
+          </div>
+        `).join('');
+      } catch {
+        grid.innerHTML = '<div class="error-msg">Could not load movies for this genre.</div>';
+      }
+    }
+
+    loadGenres();
+  </script>
+</body>
+</html>

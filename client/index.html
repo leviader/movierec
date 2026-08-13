@@ -2,294 +2,286 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CineGraph — Movie Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg: #f8f6f2;
+      --bg-card: #ffffff;
+      --bg-hover: #f0ede8;
+      --border: #e2ddd6;
+      --border-light: #edeae4;
+      --gold: #b8855c;
+      --gold-dim: #a0714d;
+      --ink: #2c2a27;
+      --ink-dim: #6b6660;
+      --ink-muted: #9b9590;
+      --radius: 12px;
+      --transition: 0.3s ease;
+    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: #0a0a0f;
-      color: #e8e8e8;
-      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Sen', -apple-system, BlinkMacSystemFont, sans-serif;
       line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius:4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
 
-    header {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      padding: 28px 40px;
-      border-bottom: 2px solid #2a2a4a;
+    .site-nav {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 40px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      gap: 36px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    header h1 { 
-      font-size: 28px; 
-      color: #fff;
+    .site-nav .brand {
+      font-family: 'Sen', sans-serif;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #7f77dd, #5dcaa5);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    header span { 
-      font-size: 13px; 
-      color: #8888aa; 
-      background: rgba(255,255,255,0.05);
-      padding: 4px 14px;
-      border-radius: 20px;
-      border: 1px solid #2a2a4a;
-    }
-
-    .stats {
-      display: flex;
-      gap: 24px;
-      font-size: 13px;
-      color: #8888aa;
-    }
-
-    .stats span {
+      font-size: 22px;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+      text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
-
-    .stats .number {
-      color: #fff;
-      font-weight: 600;
-      font-size: 16px;
+    .site-nav .brand::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.5;
     }
+    .site-nav a {
+      color: var(--ink-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color var(--transition);
+      position: relative;
+      padding: 4px 0;
+    }
+    .site-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width var(--transition);
+    }
+    .site-nav a:hover { color: var(--ink); }
+    .site-nav a:hover::after { width: 100%; }
+    .site-nav a.active { color: var(--gold); }
+    .site-nav a.active::after { width: 100%; }
+    .nav-spacer { flex:1; }
 
     .search-section {
       max-width: 1200px;
-      margin: 32px auto 20px;
-      padding: 0 24px;
+      margin: 28px auto 12px;
+      padding: 0 40px;
       display: flex;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
       align-items: center;
     }
-
     .search-box {
       flex: 1;
       min-width: 200px;
-      position: relative;
     }
-
     .search-box input {
       width: 100%;
       padding: 14px 20px;
-      border-radius: 12px;
-      border: 2px solid #2a2a4a;
-      background: #14141e;
-      color: #e8e8e8;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink);
       font-size: 15px;
       outline: none;
-      transition: all 0.3s ease;
+      transition: all var(--transition);
       font-family: inherit;
     }
-
-    .search-box input:focus { 
-      border-color: #7f77dd;
-      background: #1a1a2e;
-      box-shadow: 0 0 30px rgba(127, 119, 221, 0.1);
+    .search-box input:focus {
+      border-color: var(--gold-dim);
+      box-shadow: 0 0 0 3px rgba(184,133,92,0.15);
     }
-
-    .search-box input::placeholder {
-      color: #555577;
-    }
-
+    .search-box input::placeholder { color: var(--ink-muted); }
     .search-btn {
-      padding: 14px 32px;
-      background: linear-gradient(135deg, #7f77dd, #6a62c4);
+      padding: 14px 28px;
+      background: var(--gold);
       color: #fff;
       border: none;
-      border-radius: 12px;
+      border-radius: var(--radius);
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all var(--transition);
       font-family: inherit;
       white-space: nowrap;
     }
-
-    .search-btn:hover { 
+    .search-btn:hover {
+      background: var(--gold-dim);
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(127, 119, 221, 0.3);
+      box-shadow: 0 4px 12px rgba(184,133,92,0.25);
     }
-
     .search-btn.secondary {
-      background: linear-gradient(135deg, #0f6e56, #1d9e75);
+      background: var(--bg-card);
+      color: var(--ink);
+      border: 1px solid var(--border);
     }
-
     .search-btn.secondary:hover {
-      box-shadow: 0 8px 25px rgba(29, 158, 117, 0.3);
+      background: var(--bg-hover);
+      border-color: var(--gold-dim);
+      transform: none;
+      box-shadow: none;
     }
 
     .filters {
       max-width: 1200px;
-      margin: 0 auto 24px;
-      padding: 0 24px;
+      margin: 0 auto 20px;
+      padding: 0 40px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       align-items: center;
     }
-
+    .filter-label {
+      color: var(--ink-muted);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-right: 4px;
+    }
     .filter-tag {
       padding: 6px 18px;
-      border-radius: 20px;
+      border-radius: 30px;
       font-size: 13px;
-      background: #1a1a2e;
-      border: 1px solid #2a2a4a;
-      color: #8888aa;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--ink-dim);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all var(--transition);
     }
-
     .filter-tag:hover {
-      border-color: #7f77dd;
-      color: #fff;
+      border-color: var(--gold-dim);
+      color: var(--ink);
     }
-
     .filter-tag.active {
-      background: #7f77dd;
+      background: var(--gold);
       color: #fff;
-      border-color: #7f77dd;
+      border-color: var(--gold);
     }
 
     .section-title {
       max-width: 1200px;
       margin: 0 auto 16px;
-      padding: 0 24px;
-      font-size: 20px;
-      font-weight: 600;
-      color: #fff;
+      padding: 0 40px;
       display: flex;
-      align-items: center;
-      gap: 12px;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
     }
-
+    .section-title h2 {
+      font-family: 'Sen', sans-serif;
+      font-weight: 600;
+      font-size: 24px;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
     .section-title .count {
       font-size: 14px;
-      font-weight: 400;
-      color: #666688;
+      color: var(--ink-dim);
     }
 
     .movies-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 24px;
+      gap: 20px;
       max-width: 1200px;
-      margin: 0 auto 40px;
-      padding: 0 24px;
+      margin: 0 auto 48px;
+      padding: 0 40px;
     }
-
     .movie-card {
-      background: #14141e;
-      border: 1px solid #2a2a4a;
-      border-radius: 16px;
-      padding: 24px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      transition: all var(--transition);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
-
-    .movie-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #7f77dd, #5dcaa5);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .movie-card:hover::before {
-      opacity: 1;
-    }
-
     .movie-card:hover {
-      border-color: #7f77dd;
+      border-color: var(--gold-dim);
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
     }
-
     .movie-card .title {
       font-size: 17px;
       font-weight: 600;
-      color: #fff;
-      margin-bottom: 4px;
-      line-height: 1.3;
+      color: var(--ink);
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
     }
-
     .movie-card .year {
       font-size: 13px;
-      color: #666688;
+      color: var(--ink-dim);
       margin-bottom: 12px;
     }
-
     .movie-card .rating {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #1a1a2e;
-      color: #fac775;
-      font-size: 14px;
-      padding: 4px 14px;
-      border-radius: 20px;
-      border: 1px solid #2a2a4a;
+      font-weight: 600;
+      color: var(--gold);
+      font-size: 17px;
     }
-
     .movie-card .genres {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       margin-top: 12px;
     }
-
     .movie-card .genre-tag {
       font-size: 11px;
-      padding: 2px 10px;
-      border-radius: 12px;
-      background: #1a1a2e;
-      color: #8888aa;
-      border: 1px solid #2a2a4a;
+      padding: 2px 12px;
+      border-radius: 20px;
+      background: var(--bg);
+      color: var(--ink-dim);
+      border: 1px solid var(--border-light);
     }
 
-    /* Modal */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
-
     .modal-overlay.active { display: flex; }
-
     .modal {
-      background: #14141e;
-      border: 1px solid #2a2a4a;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: 20px;
       padding: 40px;
       max-width: 600px;
@@ -298,403 +290,389 @@
       overflow-y: auto;
       position: relative;
       animation: modalIn 0.3s ease;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
     }
-
     @keyframes modalIn {
-      from { transform: scale(0.95); opacity: 0; }
+      from { transform: scale(0.96); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-
-    .modal h2 { 
-      font-size: 28px; 
-      color: #fff; 
-      margin-bottom: 4px;
+    .modal h2 {
+      font-family: 'Sen', sans-serif;
+      font-size: 28px;
+      color: var(--ink);
+      margin-bottom: 2px;
       font-weight: 700;
+      letter-spacing: -0.02em;
     }
-
-    .modal .meta { 
-      font-size: 15px; 
-      color: #8888aa; 
+    .modal .meta {
+      font-size: 15px;
+      color: var(--ink-dim);
       margin-bottom: 24px;
       display: flex;
       gap: 16px;
       align-items: center;
     }
-
     .modal-close {
       position: absolute;
-      top: 16px; 
+      top: 16px;
       right: 20px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid #2a2a4a;
+      background: var(--bg);
+      border: 1px solid var(--border);
       border-radius: 50%;
       width: 40px;
       height: 40px;
-      color: #8888aa;
-      font-size: 20px;
+      color: var(--ink-dim);
+      font-size: 22px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all var(--transition);
       display: flex;
       align-items: center;
       justify-content: center;
+      line-height: 1;
     }
-
-    .modal-close:hover { 
-      background: #2a2a4a;
-      color: #fff;
+    .modal-close:hover {
+      background: var(--bg-hover);
+      color: var(--ink);
+      border-color: var(--gold-dim);
     }
-
-    .modal-section {
-      margin-bottom: 20px;
-    }
-
+    .modal-section { margin-bottom: 20px; }
     .modal-section .label {
-      font-size: 12px;
-      color: #666688;
+      font-size: 11px;
+      color: var(--ink-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: 600;
     }
-
-    .tag-row { 
-      display: flex; 
-      flex-wrap: wrap; 
-      gap: 8px; 
-    }
-
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
     .tag {
       padding: 6px 16px;
-      border-radius: 20px;
+      border-radius: 30px;
       font-size: 13px;
       font-weight: 500;
     }
-
-    .tag.genre { 
-      background: #2a1a4a; 
-      color: #afa9ec; 
-      border: 1px solid #3a2a5a;
+    .tag.genre {
+      background: var(--bg);
+      color: var(--ink);
+      border: 1px solid var(--border-light);
     }
-
-    .tag.actor { 
-      background: #0a2a2a; 
-      color: #5dcaa5; 
-      border: 1px solid #1a3a3a;
+    .tag.actor {
+      background: #eef3f0;
+      color: #3d6b5c;
+      border: 1px solid #d4dfd9;
+      cursor: pointer;
     }
-
-    .tag.director { 
-      background: #2a1a10; 
-      color: #f0997b; 
-      border: 1px solid #3a2a20;
+    .tag.actor:hover {
+      background: #dce8e3;
+      border-color: #a0714d;
     }
-
+    .tag.director {
+      background: #f5ede8;
+      color: #8a6a5a;
+      border: 1px solid #e8ddd6;
+      cursor: pointer;
+    }
+    .tag.director:hover {
+      background: #ede3dc;
+      border-color: #a0714d;
+    }
     .similar-card {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: #0a0a12;
-      border: 1px solid #2a2a4a;
-      border-radius: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       margin-bottom: 8px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all var(--transition);
     }
-
-    .similar-card:hover { 
-      border-color: #7f77dd;
-      background: #1a1a2e;
+    .similar-card:hover {
+      border-color: var(--gold-dim);
+      background: var(--bg-hover);
     }
-
-    .similar-card .s-title { 
-      font-size: 14px; 
-      color: #fff; 
+    .similar-card .s-title {
+      font-size: 14px;
+      color: var(--ink);
       font-weight: 500;
     }
-
     .similar-card .s-shared {
       font-size: 12px;
-      color: #8888aa;
+      color: var(--ink-dim);
     }
 
-    .loading, .empty {
+    .loading, .empty, .error-msg {
       text-align: center;
-      padding: 60px 20px;
-      color: #666688;
-      font-size: 16px;
+      padding: 48px 20px;
+      color: var(--ink-dim);
+      font-size: 15px;
+      grid-column: 1/-1;
     }
-
-    .error-msg {
-      text-align: center;
-      padding: 60px 20px;
-      color: #f0997b;
-      font-size: 16px;
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
     }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #0a0a0f; }
-    ::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3a3a5a; }
+    .loading::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-msg { color: #b07a6a; }
+    .empty { color: var(--ink-muted); }
 
     @media (max-width: 768px) {
-      header { padding: 20px; }
-      header h1 { font-size: 22px; }
-      .search-section { flex-direction: column; }
-      .search-btn { width: 100%; justify-content: center; }
-      .movies-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
-      .modal { padding: 24px; }
+      .site-nav { padding:12px 20px; gap:20px; flex-wrap:wrap; }
+      .site-nav .brand { font-size:18px; }
+      .search-section { padding:0 20px; flex-direction:column; }
+      .search-btn { width:100%; justify-content:center; }
+      .filters { padding:0 20px; }
+      .section-title { padding:0 20px; }
+      .movies-grid { padding:0 20px; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:14px; }
+      .modal { padding:24px; }
+    }
+    @media (max-width: 480px) {
+      .movies-grid { grid-template-columns:1fr 1fr; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="header-left">
-    <h1>🎬 CineGraph</h1>
-    <span>Powered by Neo4j</span>
-  </div>
-  <div class="stats">
-    <span>🎥 <span class="number" id="movie-count">0</span> movies</span>
-    <span>⭐ <span class="number" id="avg-rating">0.0</span> avg rating</span>
-  </div>
-</header>
+  <nav class="site-nav">
+    <a href="index.html" class="brand">CineGraph</a>
+    <a href="index.html" class="active">Home</a>
+    <a href="genre.html">Genres</a>
+    <span class="nav-spacer"></span>
+    <a href="person.html">Person</a>
+  </nav>
 
-<div class="search-section">
-  <div class="search-box">
-    <input id="search-input" type="text" placeholder="Search for a movie..." />
-  </div>
-  <button class="search-btn" onclick="searchMovies()">🔍 Search</button>
-  <button class="search-btn secondary" onclick="resetSearch()">✨ Show all</button>
-</div>
-
-<div class="search-section" style="margin-top: 0;">
-  <div class="search-box" style="flex: 0.7;">
-    <input id="actor-input" type="text" placeholder="Search by actor..." />
-  </div>
-  <button class="search-btn secondary" onclick="searchByActor()">🎭 Find movies</button>
-</div>
-
-<div class="filters" id="genre-filters">
-  <span style="color:#666688; font-size:13px; font-weight:500;">Filter by genre:</span>
-  <span class="filter-tag active" data-genre="all" onclick="filterByGenre('all')">All</span>
-</div>
-
-<div class="section-title">
-  <span id="grid-label">All Movies</span>
-  <span class="count" id="result-count"></span>
-</div>
-
-<div class="movies-grid" id="movies-grid">
-  <div class="loading">Loading movies...</div>
-</div>
-
-<!-- Modal -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
-  <div class="modal" id="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <h2 id="modal-title"></h2>
-    <div class="meta" id="modal-meta"></div>
-    <div class="modal-section">
-      <div class="label">Genres</div>
-      <div class="tag-row" id="modal-genres"></div>
+  <div class="search-section">
+    <div class="search-box">
+      <input id="search-input" type="text" placeholder="Search for a movie…" />
     </div>
-    <div class="modal-section">
-      <div class="label">Cast</div>
-      <div class="tag-row" id="modal-actors"></div>
-    </div>
-    <div class="modal-section">
-      <div class="label">Director</div>
-      <div class="tag-row" id="modal-directors"></div>
-    </div>
-    <div class="modal-section" id="similar-section" style="display:none;">
-      <div class="label">🎯 Similar Movies</div>
-      <div id="modal-similar"></div>
-    </div>
+    <button class="search-btn" onclick="searchMovies()">Search</button>
+    <button class="search-btn secondary" onclick="resetSearch()">Show All</button>
   </div>
-</div>
 
-<script>
-  let currentMovies = [];
-  let currentGenre = 'all';
+  <div class="search-section" style="margin-top:0;">
+    <div class="search-box" style="flex:0.7;">
+      <input id="actor-input" type="text" placeholder="Search by actor…" />
+    </div>
+    <button class="search-btn secondary" onclick="searchByActor()">Find Movies</button>
+  </div>
 
-  async function loadAllMovies() {
-    const grid = document.getElementById('movies-grid');
-    try {
-      const res = await fetch('/api/movies');
-      if (!res.ok) throw new Error();
-      const movies = await res.json();
-      currentMovies = movies;
-      renderMovies(movies, 'All Movies');
-      updateStats(movies);
-      loadGenres(movies);
-    } catch {
-      grid.innerHTML = '<div class="error-msg">⚠️ Could not connect to the database. Is the server running?</div>';
-    }
-  }
+  <div class="filters" id="genre-filters">
+    <span class="filter-label">Filter by genre</span>
+    <span class="filter-tag active" data-genre="all" onclick="filterByGenre('all')">All</span>
+  </div>
 
-  async function searchMovies() {
-    const q = document.getElementById('search-input').value.trim();
-    if (!q) return loadAllMovies();
-    const grid = document.getElementById('movies-grid');
-    grid.innerHTML = '<div class="loading">🔍 Searching...</div>';
-    try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-      const movies = await res.json();
-      currentMovies = movies;
-      renderMovies(movies, `Results for "${q}"`);
-      updateStats(movies);
-    } catch {
-      grid.innerHTML = '<div class="error-msg">Search failed. Please try again.</div>';
-    }
-  }
+  <div class="section-title">
+    <h2 id="grid-label">All Movies</h2>
+    <span class="count" id="result-count"></span>
+  </div>
 
-  async function searchByActor() {
-    const name = document.getElementById('actor-input').value.trim();
-    if (!name) return;
-    const grid = document.getElementById('movies-grid');
-    grid.innerHTML = '<div class="loading">🎭 Finding movies...</div>';
-    try {
-      const res = await fetch(`/api/actor/${encodeURIComponent(name)}`);
-      const movies = await res.json();
-      currentMovies = movies;
-      renderMovies(movies, `Movies featuring ${name}`);
-      updateStats(movies);
-    } catch {
-      grid.innerHTML = '<div class="error-msg">Could not fetch actor movies. Please try again.</div>';
-    }
-  }
+  <div class="movies-grid" id="movies-grid">
+    <div class="loading">Loading movies</div>
+  </div>
 
-  function filterByGenre(genre) {
-    currentGenre = genre;
-    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
-    document.querySelector(`[data-genre="${genre}"]`)?.classList.add('active');
-    
-    let filtered = currentMovies;
-    if (genre !== 'all') {
-      filtered = currentMovies.filter(m => m.genres && m.genres.includes(genre));
-    }
-    renderMovies(filtered, genre === 'all' ? 'All Movies' : `${genre} Movies`);
-    updateStats(filtered);
-  }
-
-  function resetSearch() {
-    document.getElementById('search-input').value = '';
-    document.getElementById('actor-input').value = '';
-    loadAllMovies();
-    filterByGenre('all');
-  }
-
-  function renderMovies(movies, label) {
-    document.getElementById('grid-label').textContent = label;
-    document.getElementById('result-count').textContent = `(${movies.length} movies)`;
-    const grid = document.getElementById('movies-grid');
-    if (!movies.length) {
-      grid.innerHTML = '<div class="empty">🎬 No movies found. Try a different search!</div>';
-      return;
-    }
-    grid.innerHTML = movies.map(m => `
-      <div class="movie-card" onclick="openModal('${m.title.replace(/'/g, "\\'")}')">
-        <div class="title">${m.title}</div>
-        <div class="year">${m.year}</div>
-        <div class="rating">⭐ ${m.rating}</div>
-        ${m.genres && m.genres.length ? `
-          <div class="genres">
-            ${m.genres.slice(0, 3).map(g => `<span class="genre-tag">${g}</span>`).join('')}
-          </div>
-        ` : ''}
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" id="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h2 id="modal-title"></h2>
+      <div class="meta" id="modal-meta"></div>
+      <div class="modal-section">
+        <div class="label">Genres</div>
+        <div class="tag-row" id="modal-genres"></div>
       </div>
-    `).join('');
-  }
+      <div class="modal-section">
+        <div class="label">Cast</div>
+        <div class="tag-row" id="modal-actors"></div>
+      </div>
+      <div class="modal-section">
+        <div class="label">Director</div>
+        <div class="tag-row" id="modal-directors"></div>
+      </div>
+      <div class="modal-section" id="similar-section" style="display:none;">
+        <div class="label">Similar Movies</div>
+        <div id="modal-similar"></div>
+      </div>
+    </div>
+  </div>
 
-  function updateStats(movies) {
-    document.getElementById('movie-count').textContent = movies.length;
-    if (movies.length) {
-      const avg = movies.reduce((sum, m) => sum + parseFloat(m.rating), 0) / movies.length;
-      document.getElementById('avg-rating').textContent = avg.toFixed(1);
-    } else {
-      document.getElementById('avg-rating').textContent = '0.0';
+  <script>
+    let currentMovies = [];
+    let currentGenre = 'all';
+
+    async function loadAllMovies() {
+      const grid = document.getElementById('movies-grid');
+      try {
+        const res = await fetch('/api/movies');
+        if (!res.ok) throw new Error();
+        const movies = await res.json();
+        currentMovies = movies;
+        renderMovies(movies, 'All Movies');
+        loadGenres(movies);
+      } catch {
+        grid.innerHTML = '<div class="error-msg">Could not connect to the database. Is the server running?</div>';
+      }
     }
-  }
 
-  function loadGenres(movies) {
-    const genreSet = new Set();
-    movies.forEach(m => {
-      if (m.genres) m.genres.forEach(g => genreSet.add(g));
-    });
-    const container = document.getElementById('genre-filters');
-    genreSet.forEach(g => {
-      const tag = document.createElement('span');
-      tag.className = 'filter-tag';
-      tag.dataset.genre = g;
-      tag.textContent = g;
-      tag.onclick = () => filterByGenre(g);
-      container.appendChild(tag);
-    });
-  }
-
-  async function openModal(title) {
-    try {
-      const res = await fetch(`/api/movies/${encodeURIComponent(title)}`);
-      const m = await res.json();
-      document.getElementById('modal-title').textContent = m.title;
-      document.getElementById('modal-meta').innerHTML = `
-        <span>📅 ${m.year}</span>
-        <span>⭐ ${m.rating}</span>
-      `;
-      document.getElementById('modal-genres').innerHTML =
-        m.genres?.map(g => `<span class="tag genre">${g}</span>`).join('') || '<span style="color:#666688;">No genres listed</span>';
-      document.getElementById('modal-actors').innerHTML =
-        m.actors?.map(a => `<span class="tag actor">${a}</span>`).join('') || '<span style="color:#666688;">No cast listed</span>';
-      document.getElementById('modal-directors').innerHTML =
-        m.directors?.map(d => `<span class="tag director">${d}</span>`).join('') || '<span style="color:#666688;">No director listed</span>';
-      document.getElementById('modal-overlay').classList.add('active');
-      loadSimilarMovies(m.title);
-    } catch {
-      alert('Could not load movie details. Please try again.');
+    async function searchMovies() {
+      const q = document.getElementById('search-input').value.trim();
+      if (!q) return loadAllMovies();
+      const grid = document.getElementById('movies-grid');
+      grid.innerHTML = '<div class="loading">Searching</div>';
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+        const movies = await res.json();
+        currentMovies = movies;
+        renderMovies(movies, `Results for “${q}”`);
+      } catch {
+        grid.innerHTML = '<div class="error-msg">Search failed. Please try again.</div>';
+      }
     }
-  }
 
-  async function loadSimilarMovies(title) {
-    const section = document.getElementById('similar-section');
-    const container = document.getElementById('modal-similar');
-    container.innerHTML = '';
-    section.style.display = 'none';
-    try {
-      const res = await fetch(`/api/movies/${encodeURIComponent(title)}/similar`);
-      const similar = await res.json();
-      if (!similar.length) return;
-      section.style.display = 'block';
-      container.innerHTML = similar.map(s => `
-        <div class="similar-card" onclick="openModal('${s.title.replace(/'/g, "\\'")}')">
-          <span class="s-title">${s.title}</span>
-          <span class="s-shared">${s.sharedCount} shared cast · ⭐ ${s.rating}</span>
+    async function searchByActor() {
+      const name = document.getElementById('actor-input').value.trim();
+      if (!name) return;
+      const grid = document.getElementById('movies-grid');
+      grid.innerHTML = '<div class="loading">Finding movies</div>';
+      try {
+        const res = await fetch(`/api/actor/${encodeURIComponent(name)}`);
+        const movies = await res.json();
+        currentMovies = movies;
+        renderMovies(movies, `Movies featuring ${name}`);
+      } catch {
+        grid.innerHTML = '<div class="error-msg">Could not fetch actor movies.</div>';
+      }
+    }
+
+    function filterByGenre(genre) {
+      currentGenre = genre;
+      document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-genre="${genre}"]`)?.classList.add('active');
+      let filtered = currentMovies;
+      if (genre !== 'all') {
+        filtered = currentMovies.filter(m => m.genres && m.genres.includes(genre));
+      }
+      renderMovies(filtered, genre === 'all' ? 'All Movies' : `${genre} Movies`);
+    }
+
+    function resetSearch() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('actor-input').value = '';
+      loadAllMovies();
+      filterByGenre('all');
+    }
+
+    function renderMovies(movies, label) {
+      document.getElementById('grid-label').textContent = label;
+      document.getElementById('result-count').textContent = `(${movies.length} movies)`;
+      const grid = document.getElementById('movies-grid');
+      if (!movies.length) {
+        grid.innerHTML = '<div class="empty">No movies found. Try a different search.</div>';
+        return;
+      }
+      grid.innerHTML = movies.map(m => `
+        <div class="movie-card" onclick="openModal('${m.title.replace(/'/g, "\\'")}')">
+          <div class="title">${m.title}</div>
+          <div class="year">${m.year}</div>
+          <div class="rating">${m.rating}</div>
+          ${m.genres && m.genres.length ? `
+            <div class="genres">
+              ${m.genres.slice(0, 3).map(g => `<span class="genre-tag">${g}</span>`).join('')}
+            </div>
+          ` : ''}
         </div>
       `).join('');
-    } catch {
-      // Silently skip - not critical
     }
-  }
 
-  function closeModal(event) {
-    if (!event || event.target === document.getElementById('modal-overlay')) {
-      document.getElementById('modal-overlay').classList.remove('active');
+    function loadGenres(movies) {
+      const genreSet = new Set();
+      movies.forEach(m => { if (m.genres) m.genres.forEach(g => genreSet.add(g)); });
+      const container = document.getElementById('genre-filters');
+      // Keep the "All" chip, remove any previously added genre chips
+      const allChip = container.querySelector('[data-genre="all"]');
+      container.innerHTML = '';
+      container.appendChild(allChip);
+      genreSet.forEach(g => {
+        const tag = document.createElement('span');
+        tag.className = 'filter-tag';
+        tag.dataset.genre = g;
+        tag.textContent = g;
+        tag.onclick = () => filterByGenre(g);
+        container.appendChild(tag);
+      });
     }
-  }
 
-  document.getElementById('search-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') searchMovies();
-  });
+    async function openModal(title) {
+      try {
+        const res = await fetch(`/api/movies/${encodeURIComponent(title)}`);
+        const m = await res.json();
+        document.getElementById('modal-title').textContent = m.title;
+        document.getElementById('modal-meta').innerHTML = `
+          <span>${m.year}</span>
+          <span>${m.rating}</span>
+        `;
+        document.getElementById('modal-genres').innerHTML =
+          m.genres?.map(g => `<span class="tag genre">${g}</span>`).join('') || '<span style="color:var(--ink-muted);">No genres listed</span>';
+        document.getElementById('modal-actors').innerHTML =
+          m.actors?.map(a => `<span class="tag actor" onclick="location.href='person.html?name=${encodeURIComponent(a)}'">${a}</span>`).join('') || '<span style="color:var(--ink-muted);">No cast listed</span>';
+        document.getElementById('modal-directors').innerHTML =
+          m.directors?.map(d => `<span class="tag director" onclick="location.href='person.html?name=${encodeURIComponent(d)}'">${d}</span>`).join('') || '<span style="color:var(--ink-muted);">No director listed</span>';
+        document.getElementById('modal-overlay').classList.add('active');
+        loadSimilarMovies(m.title);
+      } catch {
+        alert('Could not load movie details. Please try again.');
+      }
+    }
 
-  document.getElementById('actor-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') searchByActor();
-  });
+    async function loadSimilarMovies(title) {
+      const section = document.getElementById('similar-section');
+      const container = document.getElementById('modal-similar');
+      container.innerHTML = '';
+      section.style.display = 'none';
+      try {
+        const res = await fetch(`/api/movies/${encodeURIComponent(title)}/similar`);
+        const similar = await res.json();
+        if (!similar.length) return;
+        section.style.display = 'block';
+        container.innerHTML = similar.map(s => `
+          <div class="similar-card" onclick="openModal('${s.title.replace(/'/g, "\\'")}')">
+            <span class="s-title">${s.title}</span>
+            <span class="s-shared">${s.sharedCount} shared cast · ⭐ ${s.rating}</span>
+          </div>
+        `).join('');
+      } catch {}
+    }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal(e);
-  });
+    function closeModal(event) {
+      if (!event || event.target === document.getElementById('modal-overlay')) {
+        document.getElementById('modal-overlay').classList.remove('active');
+      }
+    }
 
-  loadAllMovies();
-</script>
+    document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') searchMovies(); });
+    document.getElementById('actor-input').addEventListener('keydown', e => { if (e.key === 'Enter') searchByActor(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(e); });
+
+  async function checkMovieParam() {
+      const params = new URLSearchParams(window.location.search);
+      const movieTitle = params.get('movie');
+      if (movieTitle) {
+        await openModal(movieTitle);
+      }
+    }
+
+    loadAllMovies().then(checkMovieParam);
+  </script>
 </body>
 </html>
