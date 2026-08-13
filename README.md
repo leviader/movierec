@@ -3,10 +3,11 @@
 A graph‑backed movie discovery platform built with **CognoDB** (managed Neo4j) and **Node.js + Express**.
 Explore movies, actors, directors, and the connections between them — like who worked with whom, and which movies share cast members.
 
-**Live demo:** https://your-app.onrender.com
+**Live demo:** https://movierec-pri1.onrender.com
 > Note: hosted on Render's free tier — the first request after inactivity may take 30–60s to wake the server.
 
-**Screen recording:** [add your Loom/YouTube link here]
+**Screen recording:** [demo.mp4](client/screenshots/demo.mp4)
+
 
 ---
 
@@ -131,15 +132,10 @@ If the CognoDB connection is unreachable, API routes return a `500` with a JSON 
 
 ## Screenshots
 
-
-```markdown
 ![Home – browse & search](client/screenshots/home.png)
 ![Movie detail modal](client/screenshots/movie-detail.png)
 ![Person profile page](client/screenshots/person.png)
 ![Browse by genre](client/screenshots/genre.png)
-```
-
----
 
 ## Tech stack
 
